@@ -49,8 +49,8 @@ namespace aa.Commands
     public class Creator
     {
         public int id { get; set; }
-        public string name { get; set; }
-        public string type { get; set; }
+        public string ?name { get; set; }
+        public string ?type { get; set; }
         public bool isRNVAccount { get; set; }
         public bool hasVerifiedBadge { get; set; }
     }
@@ -94,15 +94,15 @@ namespace aa.Commands
     public class UniverseInfo
     {
         public long id { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
+        public string? name { get; set; }
+        public string? description { get; set; }
         public bool isArchived { get; set; }
         public long rootPlaceId { get; set; }
         public bool isActive { get; set; }
-        public string privacyType { get; set; }
-        public string creatorType { get; set; }
+        public string? privacyType { get; set; }
+        public string? creatorType { get; set; }
         public int creatorTargetId { get; set; }
-        public string creatorName { get; set; }
+        public string ?creatorName { get; set; }
         public DateTime created { get; set; }
         public DateTime updated { get; set; }
     }
@@ -172,19 +172,7 @@ namespace aa.Commands
 
 
 
-    static class Whitelisted
-    {
-        /*
-         * whitelisted.Add("568374878500159490"); // hanad
-            whitelisted.Add("904498859013718016"); // zaxar
-            whitelisted.Add("814985597730291713"); // joe biden
-            whitelisted.Add("377904721425334272"); // putin
-            whitelisted.Add("652106591189073932"); // hakates
-            whitelisted.Add("339928400418308096"); // ooga
-         */
-        public static string Whitelisted1 = "396306180626055170,568374878500159490,904498859013718016,814985597730291713,377904721425334272,652106591189073932,339928400418308096";
-
-    }
+    
     internal class AOTPcommands : BaseCommandModule
     {
 
@@ -254,84 +242,11 @@ namespace aa.Commands
 
             }
         }
-        [Command("setpassword")]
-        public async Task setPassword(CommandContext ctx, string password)
-        {
-            if (lockmodeactive)
-            {
-
-                var embed1234 = new DiscordEmbedBuilder()
-                {
-                    Title = "turning off lock mode and executing command ",
-                };
-                lockmodeactive = false;
-                await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
-            }
-            else
-            {
-                var id = ctx.User.Id.ToString();
-                var xd = Whitelisted.Whitelisted1.Split(',');
-                if (Array.IndexOf(xd, id) != -1)
-                {
-                    password2 = password;
-                    await ctx.Channel.SendMessageAsync("set password as: " + password).ConfigureAwait(false);
-                }
-                else
-                {
-                    await ctx.Channel.SendMessageAsync("You are not whitelisted").ConfigureAwait(false);
-                }
-            }
-
-
-        }
-        [Command("lock")]
-        public async Task lockBot(CommandContext ctx)
-        {
-            if (lockmodeactive)
-            {
-
-                var embed1234 = new DiscordEmbedBuilder()
-                {
-                    Title = "turning off lock mode and executing command ",
-                };
-                lockmodeactive = false;
-                await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
-            }
-            else if (Array.IndexOf(Whitelisted.Whitelisted1.Split(','), ctx.User.Id.ToString()) != -1)
-            {
-                locked = true;
-                var embed1234 = new DiscordEmbedBuilder()
-                {
-                    Title = "I have been chained",
-                };
-                await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
-
-            }
-            else if (Array.IndexOf(Whitelisted.Whitelisted1.Split(','), ctx.User.Id.ToString()) == -1)
-            {
-                await ctx.Channel.SendMessageAsync("You are not a seed giver").ConfigureAwait(false);
-            }
-
-        }
+        
         [Command("universe")]
         public async Task setUniverse(CommandContext ctx, string poop)
         {
-            if (lockmodeactive)
-            {
-
-                var embed1234 = new DiscordEmbedBuilder()
-                {
-                    Title = "turning off lock mode and executing command ",
-                };
-                lockmodeactive = false;
-                await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
-            }
-            if (locked && Array.IndexOf(Whitelisted.Whitelisted1.Split(','), ctx.User.Id.ToString()) == -1)
-            {
-
-                await ctx.Channel.SendMessageAsync("You cannot utilize my abilities while I am chained.").ConfigureAwait(false);
-                return;
-            }
+            
             if (poop.ToLower() == "aotp")
             {
                 universe = "2179520157";
@@ -368,20 +283,7 @@ namespace aa.Commands
 
 
         }
-        [Command("password")]
-        public async Task pasward(CommandContext ctx, string pass)
-        {
-            if (pass == password2)
-            {
-                locked = false;
-                await ctx.Channel.SendMessageAsync("lock mode deactivated").ConfigureAwait(false);
-            }
-            else
-            {
-                await ctx.Channel.SendMessageAsync("wrong password").ConfigureAwait(false);
-
-            }
-        }
+        
         [Command("real")]
         [Cooldown(1, 3, bucketType: CooldownBucketType.User)]
         public async Task real(CommandContext ctx, string placeId, string jobid)
@@ -394,8 +296,6 @@ namespace aa.Commands
                 await ctx.Channel.SendMessageAsync("no cookie").ConfigureAwait(false);
                 return;
             }
-            Console.WriteLine("ok");
-
             var cookieValue = cookie2;
             var url = "https://gamejoin.roblox.com/v1/join-game-instance";
             var _client = new HttpClient();
@@ -424,32 +324,21 @@ namespace aa.Commands
         [CooldownAttribute(1, 3, bucketType: CooldownBucketType.User)]
         public async Task setCookie(CommandContext ctx, string cook)
         {
-            if (locked && Array.IndexOf(Whitelisted.Whitelisted1.Split(','), ctx.User.Id.ToString()) == -1)
-            {
-                await ctx.Channel.SendMessageAsync("You cannot utilize my abilities while I am chained.").ConfigureAwait(false);
-                return;
-            }
+            
             cookie2 = cook;
             await ctx.Channel.SendMessageAsync("ok").ConfigureAwait(false);
         }
         [Command("printcookie")]
         public async Task send(CommandContext ctx)
         {
-            if (locked && Array.IndexOf(Whitelisted.Whitelisted1.Split(','), ctx.User.Id.ToString()) == -1)
-            {
-                await ctx.Channel.SendMessageAsync("You cannot utilize my abilities while I am chained.").ConfigureAwait(false);
-                return;
-            }
+            
             if (cookie2.Length == 0)
             {
                 await ctx.Channel.SendMessageAsync("no cookie set").ConfigureAwait(false);
-
-
             }
             else
             {
                 await ctx.Channel.SendMessageAsync("Cookie is: " + cookie2).ConfigureAwait(false);
-
             }
         }
 
@@ -484,9 +373,8 @@ namespace aa.Commands
             var blacklistAPI = await _client.GetStringAsync($"https://develop.roblox.com/v1/universes/{universe}");
             var creatorname = JsonSerializer.Deserialize<UniverseInfo>(blacklistAPI).creatorName;
             var blacklist = creatorname;
-            var zs = await _client.GetStringAsync(url);
-            var DATA = JsonSerializer.Deserialize<PlacesInfo>(zs);
-
+            var places = await _client.GetStringAsync(url);
+            var DATA = JsonSerializer.Deserialize<PlacesInfo>(places);
             foreach (Datum d in DATA.data)
             {
 
