@@ -78,7 +78,7 @@ namespace aa.Commands
     {
         public object? previousPageCursor { get; set; }
         public object? nextPageCursor { get; set; }
-        public Datum[]? data { get; set; }
+        public Datum[]? data { get; set; } 
     }
 
     public class Datum

@@ -4483,11 +4483,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\muhan\\Desktop\\DiscordBot_DSHARP-LIBRARY_ROBLOX-API-master\\aa\\aa.csproj",
+      "projectUniqueName": "C:\\Users\\muhan\\Source\\Repos\\CSharpDiscordBotRobloxAPI\\aa\\aa.csproj",
       "projectName": "aa",
-      "projectPath": "C:\\Users\\muhan\\Desktop\\DiscordBot_DSHARP-LIBRARY_ROBLOX-API-master\\aa\\aa.csproj",
+      "projectPath": "C:\\Users\\muhan\\Source\\Repos\\CSharpDiscordBotRobloxAPI\\aa\\aa.csproj",
       "packagesPath": "C:\\Users\\muhan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\muhan\\Desktop\\DiscordBot_DSHARP-LIBRARY_ROBLOX-API-master\\aa\\obj\\",
+      "outputPath": "C:\\Users\\muhan\\Source\\Repos\\CSharpDiscordBotRobloxAPI\\aa\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
