@@ -2,6 +2,7 @@
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -118,50 +119,61 @@ namespace aa.Commands
         public Joinscript? joinScript { get; set; }
     }
 
+
     public class Joinscript
     {
         public int ClientPort { get; set; }
-        public string? MachineAddress { get; set; }
+        public string MachineAddress { get; set; }
         public int ServerPort { get; set; }
-        public Serverconnection[]? ServerConnections { get; set; }
+        public List<Serverconnection> ServerConnections { get; set; }
+        public List<UdmuxEndpoint> UdmuxEndpoints { get; set; }
         public bool DirectServerReturn { get; set; }
-        public string? PingUrl { get; set; }
+        public int PepperId { get; set; }
+        public string TokenValue { get; set; }
+        public string PingUrl { get; set; }
         public int PingInterval { get; set; }
-        public string? UserName { get; set; }
-        public string? DisplayName { get; set; }
+        public string UserName { get; set; }
+        public string DisplayName { get; set; }
+        public bool HasVerifiedBadge { get; set; }
         public bool SeleniumTestMode { get; set; }
         public long UserId { get; set; }
-        public string? RobloxLocale { get; set; }
-        public string? GameLocale { get; set; }
+        public string RobloxLocale { get; set; }
+        public string GameLocale { get; set; }
         public bool SuperSafeChat { get; set; }
         public bool FlexibleChatEnabled { get; set; }
-        public string? CharacterAppearance { get; set; }
-        public string? ClientTicket { get; set; }
-        public string? GameId { get; set; }
+        public string CharacterAppearance { get; set; }
+        public string ClientTicket { get; set; }
+        public string GameId { get; set; }
         public long PlaceId { get; set; }
-        public string? BaseUrl { get; set; }
-        public string? ChatStyle { get; set; }
+        public string BaseUrl { get; set; }
+        public string ChatStyle { get; set; }
         public int CreatorId { get; set; }
-        public string? CreatorTypeEnum { get; set; }
-        public string? MembershipType { get; set; }
+        public string CreatorTypeEnum { get; set; }
+        public string MembershipType { get; set; }
         public int AccountAge { get; set; }
-        public string? CookieStoreFirstTimePlayKey { get; set; }
-        public string? CookieStoreFiveMinutePlayKey { get; set; }
+        public string CookieStoreFirstTimePlayKey { get; set; }
+        public string CookieStoreFiveMinutePlayKey { get; set; }
         public bool CookieStoreEnabled { get; set; }
         public bool IsUnknownOrUnder13 { get; set; }
-        public string? GameChatType { get; set; }
-        public string? SessionId { get; set; }
-        public string? AnalyticsSessionId { get; set; }
+        public string GameChatType { get; set; }
+        public string SessionId { get; set; }
+        public string AnalyticsSessionId { get; set; }
         public int DataCenterId { get; set; }
         public long UniverseId { get; set; }
         public int FollowUserId { get; set; }
         public long characterAppearanceId { get; set; }
-        public string? CountryCode { get; set; }
-        public string? RandomSeed1 { get; set; }
-        public string? ClientPublicKeyData { get; set; }
-        public string? RccVersion { get; set; }
-        public string? ChannelName { get; set; }
+        public string CountryCode { get; set; }
+        public string RandomSeed1 { get; set; }
+        public string ClientPublicKeyData { get; set; }
+        public string RccVersion { get; set; }
+        public string ChannelName { get; set; }
     }
+    public class UdmuxEndpoint
+    {
+        public string Address { get; set; }
+        public int Port { get; set; }
+    }
+
 
     public class Serverconnection
     {
@@ -182,105 +194,41 @@ namespace aa.Commands
         public bool lockmodeactive = false;
         public string password2 = "";
         public bool locked = true;
+        private Dictionary<string, string> Universes = new Dictionary<string, string>()
+        {
+            {"aotp","2179520157" },
+            {"ta","2990436683" },
+            {"sp","2990436683" },
+            {"budokai","3027710332" },
+            {"shinden","2585519150" },
+            {"aotfc","2121834014" },
+            {"aotfw","4096039463" },
+            {"shitcopy","4293527120" },
+            {"jojo","4380056124" }
+        };
         [Command("universes")]
         public async Task universe1(CommandContext ctx)
         {
             var embed1234 = new DiscordEmbedBuilder()
             {
-                Title = "T:A\nAOT:P\nShinobi Project\nBudokai\nShitden\nAOT:FC",
+                Title = string.Join("\n",Universes.Keys),
             };
             await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
         }
-        [Command("stats")]
-        public async Task stats(CommandContext ctx, string npcOrPlr, double str, double dex, double con, double wil, double mnd, double spi)
-        {
-            if (npcOrPlr.ToLower() == "npc" || npcOrPlr.ToLower() == "mob")
-            {
-                str = (str / 97) * 100;
-                dex = (dex / 97) * 100;
-                con = (con / 97) * 100;
-                wil = (wil / 97) * 100;
-                mnd = (mnd / 97) * 100;
-                spi = (spi / 97) * 100;
-                str = Math.Ceiling(str);
-                dex = Math.Ceiling(dex);
-                con = Math.Ceiling(con);
-                wil = Math.Ceiling(wil);
-                mnd = Math.Ceiling(mnd);
-                spi = Math.Ceiling(spi);
-
-                var embed1234 = new DiscordEmbedBuilder()
-                {
-                    Title = "Old stats",
-                    Description = "STR: " + str + "\n DEX: " + dex + "\n CON: " + con + "\n WIL: " + wil + "\n MND: " + mnd + "\n SPI: " + spi
-                };
-                await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
-
-
-            }
-            else if (npcOrPlr.ToLower() == "plr" || npcOrPlr.ToLower() == "player")
-            {
-                str = (str / 95) * 100;
-                dex = (dex / 95) * 100;
-                con = (con / 95) * 100;
-                wil = (wil / 95) * 100;
-                mnd = (mnd / 95) * 100;
-                spi = (spi / 95) * 100;
-                str = Math.Ceiling(str);
-                dex = Math.Ceiling(dex);
-                con = Math.Ceiling(con);
-                wil = Math.Ceiling(wil);
-                mnd = Math.Ceiling(mnd);
-                spi = Math.Ceiling(spi);
-                var embed1234 = new DiscordEmbedBuilder()
-                {
-                    Title = "Old stats",
-                    Description = "STR: " + str + "\n DEX: " + dex + "\n CON: " + con + "\n WIL: " + wil + "\n MND: " + mnd + "\n SPI: " + spi
-                };
-                await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
-
-
-            }
-        }
+        
         
         [Command("universe")]
         public async Task setUniverse(CommandContext ctx, string poop)
         {
-            
-            if (poop.ToLower() == "aotp")
+            if (Universes.ContainsKey(poop))
             {
-                universe = "2179520157";
-                await ctx.Channel.SendMessageAsync("Set universe as `2179520157`, AOT:P").ConfigureAwait(false);
+                universe = Universes[poop];
+                await ctx.Channel.SendMessageAsync($"Set universe as `{universe}`, {poop}");
             }
-            else if (poop.ToLower() == "ta" || poop.ToLower() == "t:a")
+            else
             {
-                universe = "2990436683";
-                await ctx.Channel.SendMessageAsync("Set universe as `2990436683`, T:A").ConfigureAwait(false);
-
+                await ctx.Channel.SendMessageAsync($"The universe {poop} does not exist. Please use ?universes to see which are available");
             }
-            else if (poop.ToLower() == "naruto" || poop.ToLower() == "sp")
-            {
-                universe = "1529230014";
-                await ctx.Channel.SendMessageAsync("Set universe as `2990436683`, Shinobi Project").ConfigureAwait(false);
-            }
-            else if (poop.ToLower() == "budokai")
-            {
-                universe = "3027710332";
-                await ctx.Channel.SendMessageAsync("Set universe as `3027710332`, Budokai").ConfigureAwait(false);
-            }
-            else if (poop.ToLower() == "shinden" || poop.ToLower() == "shitden")
-            {
-                universe = "2585519150";
-                await ctx.Channel.SendMessageAsync("Set universe as `2585519150`, Shitden").ConfigureAwait(false);
-
-            }
-            else if (poop.ToLower() == "aotfc")
-            {
-                universe = "2121834014";
-                await ctx.Channel.SendMessageAsync("Set universe as `2121834014`, False Chance").ConfigureAwait(false);
-            }
-
-
 
         }
         
@@ -300,25 +248,65 @@ namespace aa.Commands
             var url = "https://gamejoin.roblox.com/v1/join-game-instance";
             var _client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Post, url);
-            var json = "{\"placeId\": " + placeId + ", \"isTeleport\": false, \"gameId\": " + $"\"{jobid}\"" + ", \"gameJoinAttemptId\":" + $"\"{jobid}\"" + ",\"browserTrackerId\": 0}";
+            var json2 = new
+            {
+                placeId = placeId,
+                isTeleport = false,
+                gameId = jobid,
+                gameJoinAttemptId = jobid,
+                browserTrackerId = 0
+            };
+            var js = JsonSerializer.Serialize(json2);
+            Console.WriteLine(js);
+            Console.WriteLine(js);
             string roblosecurity = cookieValue;
             CookieContainer cookies = new CookieContainer();
             cookies.Add(new Cookie(".ROBLOSECURITY", roblosecurity, "/", "roblox.com"));
             HttpClient httpClient = new HttpClient(new HttpClientHandler() { CookieContainer = cookies });
             HttpResponseMessage firstResponse = await httpClient.PostAsync("https://auth.roblox.com", null);
             var x = firstResponse.Headers.GetValues("x-csrf-token").First();
-            request.Content = new StringContent(json); request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json"); request.Headers.Add("Cookie", $".ROBLOSECURITY={cookieValue}; path =/; domain =.roblox.com;"); request.Headers.Add("Referer", $"https://www.roblox.com/games/{placeId}/"); request.Headers.Add("Origin", "https://www.roblox.com"); request.Headers.Add("User-Agent", "Roblox/WinInet"); request.Headers.Add("x-csrf-token", x);
-            Console.WriteLine("ok");
+            request.Content = new StringContent(js); 
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json"); 
+            request.Headers.Add("Cookie", $".ROBLOSECURITY={cookieValue}; path =/; domain =.roblox.com;"); 
+            request.Headers.Add("Referer", $"https://www.roblox.com/games/{placeId}/"); 
+            request.Headers.Add("Origin", "https://www.roblox.com"); 
+            request.Headers.Add("User-Agent", "Roblox/WinInet"); 
+            request.Headers.Add("x-csrf-token", x);
             var resp2 = await _client.SendAsync(request);
+            Console.WriteLine(resp2.Content.ReadAsStringAsync().Result.ToString());
+
             var serv = JsonSerializer.Deserialize<ServerInfo>(resp2.Content.ReadAsStringAsync().Result.ToString());
-            var ip2 = serv.joinScript.MachineAddress;
-            var port = serv.joinScript.ServerPort;
-            var embed132 = new DiscordEmbedBuilder()
+            try
             {
-                Title = "Server information",
-                Description = $"IP: {ip2}\n Port: {port}",
-            };
-            await ctx.Channel.SendMessageAsync(embed: embed132);
+                var ip2 = serv.joinScript.MachineAddress;
+                if (ip2.StartsWith("10."))
+                {
+                    var udmux = serv.joinScript.UdmuxEndpoints[0];
+                    var port = serv.joinScript.ServerPort;
+                    var embed132 = new DiscordEmbedBuilder()
+                    {
+                        Title = "UDMUX Enabled server information",
+                        Description = $"UDMUX IP: {udmux.Address}\n UDMUX Port: {udmux.Port}\nRCC IP: {ip2} \n RCC Port: {port}\n",
+                    };
+                    await ctx.Channel.SendMessageAsync(embed: embed132);
+
+                }
+                else
+                {
+                    var port = serv.joinScript.ServerPort;
+                    var embed132 = new DiscordEmbedBuilder()
+                    {
+                        Title = "Server information",
+                        Description = $"IP: {ip2}\n Port: {port}",
+                    };
+                    await ctx.Channel.SendMessageAsync(embed: embed132);
+                }
+            }
+            catch(NullReferenceException)
+            {
+                await ctx.Channel.SendMessageAsync("Error while parsing Gamejoin request.");
+            }
+            
         }
         [Command("cookie")]
         [CooldownAttribute(1, 3, bucketType: CooldownBucketType.User)]
@@ -387,7 +375,7 @@ namespace aa.Commands
                     foreach (Datum2 j in DATA3.data)
                     {
                         plrcount += j.playing;
-                        jobid += $"\n{j.id} | **{j.playing} / {j.maxPlayers}**sent";
+                        jobid += $"\n{j.id} | **{j.playing} / {j.maxPlayers}**";
                     }
                     if (plrcount == 0)
                     {
