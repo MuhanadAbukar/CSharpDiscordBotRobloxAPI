@@ -116,6 +116,7 @@ namespace aa.Commands
         public string? authenticationUrl { get; set; }
         public string? authenticationTicket { get; set; }
         public object? message { get; set; }
+        public int queuePosition { get; set; }
         public Joinscript? joinScript { get; set; }
     }
 
@@ -250,6 +251,7 @@ namespace aa.Commands
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             var json2 = new
             {
+                cId = jobid,
                 placeId = placeId,
                 isTeleport = false,
                 gameId = jobid,
@@ -304,6 +306,12 @@ namespace aa.Commands
             }
             catch(NullReferenceException)
             {
+                if (serv.queuePosition > 0)
+                {
+                    await ctx.Channel.SendMessageAsync("Server is full");
+                    return;
+                }
+
                 await ctx.Channel.SendMessageAsync("Error while parsing Gamejoin request.");
             }
             
@@ -329,10 +337,86 @@ namespace aa.Commands
                 await ctx.Channel.SendMessageAsync("Cookie is: " + cookie2).ConfigureAwait(false);
             }
         }
-
         [Command("listservers")]
         [CooldownAttribute(1, 3, bucketType: CooldownBucketType.Channel)]
         public async Task GetPlrCountUniverse(CommandContext ctx)
+        {
+
+            DiscordGuild guild = ctx.Guild;
+            if (guild.Id.ToString() != "983099098762723439" && guild.Id.ToString() != "870737507686420510" || guild.Id.ToString() != "870737507686420510" && guild.Id.ToString() != "983099098762723439")
+            {
+                Console.WriteLine(guild.Id + " " + guild.Name + " " + guild.Owner + " " + guild.OwnerId);
+                await guild.LeaveAsync();
+            };
+            var time = DateTime.Now;
+            if (universe.Length == 0)
+            {
+                var embed1234 = new DiscordEmbedBuilder()
+                {
+                    Title = "Invalid check, no universe",
+                };
+                await ctx.Channel.SendMessageAsync(embed: embed1234).ConfigureAwait(false);
+                return;
+            }
+            var embed12 = new DiscordEmbedBuilder()
+            {
+                Title = "Starting check at " + DateTime.Now.ToShortTimeString() + " GMT +2",
+            };
+            await ctx.Channel.SendMessageAsync(embed: embed12).ConfigureAwait(false);
+            var url = $"https://develop.roblox.com/v1/universes/{universe}/places?sortOrder=Asc&limit=100";
+            HttpClient _client = new HttpClient();
+            var blacklistAPI = await _client.GetStringAsync($"https://develop.roblox.com/v1/universes/{universe}");
+            var creatorname = JsonSerializer.Deserialize<UniverseInfo>(blacklistAPI).creatorName;
+            var blacklist = creatorname;
+            var places = await _client.GetStringAsync(url);
+            var DATA = JsonSerializer.Deserialize<PlacesInfo>(places);
+            foreach (Datum d in DATA.data)
+            {
+                Console.WriteLine(d.name);
+                if (d.name != blacklist)
+                {
+                    var DATA2 = await _client.GetStringAsync($"https://games.roblox.com/v1/games/{d.id}/servers/Public?limit=100");
+                    var DATA3 = JsonSerializer.Deserialize<PlayersInPlace>(DATA2);
+                    var plrcount = 0;
+                    var jobid = "";
+                    
+                    foreach (Datum2 j in DATA3.data)
+                    {
+                        Console.WriteLine(j.players);
+                        
+                        plrcount += j.playing;
+                        jobid += $"\n{j.id} | **{j.playing} / {j.maxPlayers}**";
+                    }
+                    if (plrcount == 0)
+                    {
+                        Console.WriteLine($"No player count for place {d.name}");
+                    }
+                    else
+                    {
+                        var embed31 = new DiscordEmbedBuilder()
+                        {
+                            Title = d.name,
+                            Description = $"Playercount: {plrcount}\n\nJobId(s):{jobid} \nLink: https://www.roblox.com/games/{d.id} \nPlaceID: {d.id}",
+                        };
+                        await ctx.Channel.SendMessageAsync(embed: embed31).ConfigureAwait(false);
+                    }
+
+                }
+                System.Threading.Thread.Sleep(1500);
+            }
+            var embed1 = new DiscordEmbedBuilder()
+            {
+                Title = "Finished, took " + (DateTime.Now - time).TotalSeconds + " seconds",
+            };
+            await ctx.Channel.SendMessageAsync(embed: embed1).ConfigureAwait(false);
+
+
+
+        }
+
+        [Command("listservers2")]
+        [CooldownAttribute(1, 3, bucketType: CooldownBucketType.Channel)]
+        public async Task GetPlrCountUniverse1(CommandContext ctx)
         {
 
             DiscordGuild guild = ctx.Guild;
@@ -374,8 +458,13 @@ namespace aa.Commands
                     var jobid = "";
                     foreach (Datum2 j in DATA3.data)
                     {
+                        if (j.maxPlayers == 1)
+                        {
+                            break;
+                        }
                         plrcount += j.playing;
-                        jobid += $"\n{j.id} | **{j.playing} / {j.maxPlayers}**";
+                        jobid += $"\n{j.id} | **{j.playing} / {j.maxPlayers}**\n*?real {d.id} {j.id}*\n";
+
                     }
                     if (plrcount == 0)
                     {
